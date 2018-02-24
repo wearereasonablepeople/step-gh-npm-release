@@ -57,4 +57,4 @@ Your workflow should look like this:
 ## Notes
 
 * Only the PATCH version is updated. (see: [semver spec](https://semver.org/))
-* This will run the `build` command before publishing the NPM release if it exists on the `package.json` file
+* This will run the `build` command before publishing the NPM release if it exists in your `package.json` file
