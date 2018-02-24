@@ -18,7 +18,7 @@ info "using \"$repo\""
 
 remote="https://$WERCKER_GH_NPM_RELEASE_GHTOKEN@github.com/$repo.git"
 
-info "using \"$remote\""
+info "using \"$repo\""
 
 if [ -n "$WERCKER_GH_NPM_RELEASE_BRANCH" ]; then
   branch="$WERCKER_GH_NPM_RELEASE_BRANCH"
