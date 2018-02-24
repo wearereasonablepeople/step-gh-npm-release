@@ -19,3 +19,6 @@ properties:
     type: string
     required: false
     default: public
+  packer:
+    type: string
+    required: false
