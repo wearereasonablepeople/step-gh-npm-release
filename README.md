@@ -13,7 +13,7 @@ A wercker step for deploying new releases to Github and NPM.
 
 ## Example
 
-The following example explains how you can create a automation pipeline that updates the `package.json` file (on the specified `branch`), creates a new Github tag and publishes a new release on NPM.
+The following example shows how you can create an automation pipeline that updates the `package.json` file (on the specified `branch`) with the new version number according to semver spec, pushes a release commit to the specified `release` branch, creates a new git tag and publishes a new release on NPM.
 
 `wercker.yml`
 
@@ -56,5 +56,4 @@ Your workflow should look like this:
 
 ## Notes
 
-* Only the PATCH version is updated. (see: [semver spec](https://semver.org/))
 * This will run the `build` command before publishing the NPM release if it exists in your `package.json` file
