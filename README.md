@@ -32,7 +32,7 @@ publish:
   steps:
     - install-packages:
         packages: git ssh-client
-    - wearereasonablepeople/gh-npm-release@0.1.15:
+    - wearereasonablepeople/gh-npm-release:
         ghtoken: $GHTOKEN
         npmtoken: $NPMTOKEN
         branch: release
