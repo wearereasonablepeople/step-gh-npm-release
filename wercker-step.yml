@@ -1,5 +1,5 @@
 name: gh-npm-release
-version: 0.1.17
+version: 0.2.0
 description: deploy to github and npm
 keywords:
   - github
