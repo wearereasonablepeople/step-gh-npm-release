@@ -37,7 +37,7 @@ git remote set-url origin "$remote"
 
 git checkout "$branch"
 
-git rebase "$WERCKER_GIT_BRANCH"
+git merge "$WERCKER_GIT_BRANCH"
 
 VERSION=$(node -p "require('./package.json').version" | awk -F. -v OFS=. 'NF==1{print ++$NF}; NF>1{if(length($NF+1)>length($NF))$(NF-1)++; $NF=sprintf("%0*d", length($NF), ($NF+1)%(10^length($NF))); print}')
 
