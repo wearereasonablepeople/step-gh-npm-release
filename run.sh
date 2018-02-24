@@ -23,11 +23,7 @@ info "using \"$remote\""
 if [ -n "$WERCKER_GH_NPM_RELEASE_BRANCH" ]; then
   branch="$WERCKER_GH_NPM_RELEASE_BRANCH"
 else
-  branch="release"
-  echo "$repo" | grep -qE "$WERCKER_GIT_OWNER\/$WERCKER_GIT_OWNER\.github\.(io|com)"
-  if [ $? -eq 0 ]; then
-      branch="master"
-  fi
+  fail "missing option \"branch\""
 fi
 
 info "using branch \"$branch\""
