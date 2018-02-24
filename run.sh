@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -ex
+set -x
 
 if [ ! -n "$WERCKER_GH_NPM_RELEASE_GHTOKEN" ]; then
   fail "missing option \"ghtoken\""
