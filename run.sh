@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -ex
+
 if [ ! -n "$WERCKER_GH_NPM_RELEASE_GHTOKEN" ]; then
   fail "missing option \"ghtoken\""
 fi
@@ -71,7 +73,11 @@ while read pkg; do
 
     mkdir -p .tmp/release
 
-    tar xf "$name-$current.tgz" -C .tmp/release
+    packagename="$name-$current"
+    packagename="${packagename/\//-}"
+    packagename="${packagename/@/}"
+
+    tar xf "$packagename.tgz" -C .tmp/release
 
     (cd .tmp/release/package && yarn publish --access "$WERCKER_GH_NPM_RELEASE_ACCESS" --new-version "$VERSION")
   fi
