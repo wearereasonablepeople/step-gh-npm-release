@@ -7,8 +7,9 @@ A wercker step for deploying new releases to Github and NPM.
 * `ghtoken` needs to be set to your github API token
 * `npmtoken` needs to be set to your npm auth token
 * `branch` specify the branch to publish
+* `packer` (optional) set to an `npm` command that creates a `NAME-VERSION.tgz` file in the same directory. when not set, `npm pack` is used for creating a tarball to publish
 * `access` needs to be set to either public or restricted (if you have a private npm account)
-* `repo` (optional) needs to be set when used with VCS other than github
+* `repo` (optional) needs to be set when used with a service other than Github
 
 ## Example
 

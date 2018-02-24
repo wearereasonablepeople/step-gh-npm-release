@@ -62,7 +62,18 @@ while read pkg; do
     if [ $? -eq 0 ]; then
       yarn && yarn build
     fi
-    yarn publish --access "$WERCKER_GH_NPM_RELEASE_ACCESS" --new-version "$VERSION"
+
+    if [ -n "$WERCKER_GH_NPM_RELEASE_PACKER" ]; then
+      npm run "$WERCKER_GH_NPM_RELEASE_PACKER"
+    else
+      npm pack
+    fi
+
+    mkdir -p .tmp/release
+
+    tar xf "$name-$current.tgz" -C .tmp/release
+
+    (cd .tmp/release/package && yarn publish --access "$WERCKER_GH_NPM_RELEASE_ACCESS" --new-version "$VERSION")
   fi
 done < <(find . -name package.json)
 
