@@ -81,7 +81,7 @@ while read pkg; do
 
     (cd .tmp/release/package && yarn publish --access "$WERCKER_GH_NPM_RELEASE_ACCESS" --new-version "$VERSION")
   fi
-done < <(find . -name package.json)
+done < <(find . -name package.json -maxdepth 1)
 
 if [ $? -ne 0 ]; then
   fail "failed deploying a new version to npm"
