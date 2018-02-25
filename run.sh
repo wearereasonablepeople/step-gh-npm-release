@@ -80,7 +80,7 @@ while read pkg; do
       (cd .tmp/release/package && yarn publish --access "$WERCKER_GH_NPM_RELEASE_ACCESS" --new-version "$VERSION")
     else
       echo "[dryrun] skipping npm publish..."
-      (cd .tmp/release/package && find . -name * && cat package.json)
+      (cd .tmp/release/package && find . -name './*' && cat package.json)
     fi
   fi
 done < <(find . -name package.json -maxdepth 1)
