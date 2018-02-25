@@ -87,6 +87,7 @@ while read pkg; do
     else
       echo "[dryrun] skipping npm publish..."
       (cd .tmp/release/package && find . -name './*' && cat package.json)
+      echo "the next release will be $VERSION"
     fi
   else
     fail "already published"
