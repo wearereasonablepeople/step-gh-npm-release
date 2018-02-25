@@ -14,11 +14,7 @@ else
   fail "missing option \"repo\""
 fi
 
-info "using \"$repo\""
-
 remote="https://$WERCKER_GH_NPM_RELEASE_GHTOKEN@github.com/$repo.git"
-
-info "using \"$repo\""
 
 if [ -n "$WERCKER_GH_NPM_RELEASE_BRANCH" ]; then
   branch="$WERCKER_GH_NPM_RELEASE_BRANCH"
@@ -26,27 +22,29 @@ else
   fail "missing option \"branch\""
 fi
 
+info "using \"$repo\""
 info "using branch \"$branch\""
 
 git config user.email "pleaseemailus@wercker.com"
 git config user.name "werckerbot"
-
 git config push.default simple
-
 git remote set-url origin "$remote"
-
 git checkout "$branch"
-
 git merge "$WERCKER_GIT_BRANCH"
 
 VERSION=$(node -p "require('./package.json').version" | awk -F. -v OFS=. 'NF==1{print ++$NF}; NF>1{if(length($NF+1)>length($NF))$(NF-1)++; $NF=sprintf("%0*d", length($NF), ($NF+1)%(10^length($NF))); print}')
 
 yarn version --new-version "$VERSION"
 
-git push && git push --tags
-
-if [ $? -ne 0 ]; then
-  fail "failed deploying a new version to github"
+if [ "$WERCKER_GH_NPM_RELEASE_DRYRUN" = "false" ]; then
+  git push && git push --tags
+  if [ $? -ne 0 ]; then
+    fail "failed deploying a new version to github"
+  fi
+else
+  echo "[dryrun] skipping git push..."
+  git log --pretty=oneline
+  git tag
 fi
 
 touch .npmrc
@@ -76,10 +74,14 @@ while read pkg; do
     packagename="${packagename/@/}"
 
     tar xf "$packagename.tgz" -C .tmp/release
-
     cp .npmrc .tmp/release
 
-    (cd .tmp/release/package && yarn publish --access "$WERCKER_GH_NPM_RELEASE_ACCESS" --new-version "$VERSION")
+    if [ "$WERCKER_GH_NPM_RELEASE_DRYRUN" = "false" ]; then
+      (cd .tmp/release/package && yarn publish --access "$WERCKER_GH_NPM_RELEASE_ACCESS" --new-version "$VERSION")
+    else
+      echo "[dryrun] skipping npm publish..."
+      (cd .tmp/release/package && find . -name * && cat package.json)
+    fi
   fi
 done < <(find . -name package.json -maxdepth 1)
 
