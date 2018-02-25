@@ -30,7 +30,7 @@ git config user.name "werckerbot"
 git config push.default simple
 git remote set-url origin "$remote"
 git checkout "$branch"
-git merge "$WERCKER_GIT_BRANCH"
+git merge "origin/$WERCKER_GIT_BRANCH"
 
 # the VERSION number is incremented after the merge is happened, so this always needs to have the latest published version
 VERSION=$(node -p "require('./package.json').version" | awk -F. -v OFS=. 'NF==1{print ++$NF}; NF>1{if(length($NF+1)>length($NF))$(NF-1)++; $NF=sprintf("%0*d", length($NF), ($NF+1)%(10^length($NF))); print}')
