@@ -45,8 +45,6 @@ if [ "$WERCKER_GH_NPM_RELEASE_DRYRUN" = "false" ]; then
   fi
 else
   echo "[dryrun] skipping git push..."
-  git log --pretty=oneline
-  git tag
 fi
 
 # npm credentials
