@@ -63,5 +63,4 @@ Your workflow should look like this:
 
 ## Notes
 
-* This will run the `build` command before publishing the npm release if it exists in your `package.json` file
 * The release branch should always have the latest published version number in the `package.json` file.

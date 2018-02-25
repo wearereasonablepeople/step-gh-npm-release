@@ -58,12 +58,6 @@ while read pkg; do
   current=$(node -e "console.log(require(\"$pkg\").version)")
 
   if [ "$published" != "$current" ]; then
-    # run the build script if it exists
-    node -e "p=require(\"$pkg\"); (p.scripts && p.scripts.build) ? process.exit(0) : process.exit(1)"
-    if [ $? -eq 0 ]; then
-      yarn && yarn build
-    fi
-
     if [ -n "$WERCKER_GH_NPM_RELEASE_PACKER" ]; then
       npm run "$WERCKER_GH_NPM_RELEASE_PACKER"
       packagename="package"
