@@ -1,20 +1,26 @@
 # wercker-step-gh-npm-release
 
-a wercker step for deploying new releases to github and npm.
+a wercker step for deploying releases to github and npm.
 
 ## options
 
 * `ghtoken` needs to be set to your github API token
 * `npmtoken` needs to be set to your npm auth token
-* `branch` specify the branch to publish
-* `packer` (optional) set to an `npm` command that creates a `NAME-VERSION.tgz` file in the same directory. when not set, `npm pack` is used for creating a tarball to publish
-* `access` needs to be set to either public or restricted (if you have a private npm account)
+* `branch` specify the branch to push release commits and tags
+* `packer` (optionally) set to an `npm` command that creates a `package.tgz` file in the same directory. when not set, `npm pack` is used for creating a tarball to publish
+* `access` needs to be set to either public or restricted (if this is a scoped package)
 * `repo` (optional) needs to be set when used with a service other than github
-* `dryrun` (optional boolean) git push and npm publish steps are skipped when this option is set. you can use it for testing and debugging.
+* `dryrun` (optional boolean) git push and npm publish steps are skipped when this option is set. you can use it for testing and debugging
 
 ## example
 
-The following example shows how you can create an automation pipeline that updates the `package.json` file (on the specified `branch`) with the new version number according to semver spec, pushes a release commit to the specified release branch, creates a new git tag and publishes a new release on npm.
+The following example shows how you can create an automation pipeline that,
+
+* Merges changes from the `master`
+* Updates the `package.json` file (on the specified `branch`) with the new version number according to semver spec
+* Pushes a release commit to the specified release branch
+* Creates a new git tag
+* Publishes a new release on npm.
 
 `wercker.yml`
 
@@ -49,12 +55,13 @@ Make sure that the `build` pipeline is hooked to git pushes and the `branch` you
 Your workflow should look like this:
 
 ```
-+-----+       +-------+
-|build| +---> |publish|
-+-----+       +-------+
-              (runs only on master)
++-----+              +-------+
+|build| +----------> |publish|
++-----+              +-------+
+(ignores release)    (runs only on master)
 ```
 
 ## Notes
 
 * This will run the `build` command before publishing the npm release if it exists in your `package.json` file
+* The release branch should always have the latest published version number in the `package.json` file.

@@ -32,8 +32,10 @@ git remote set-url origin "$remote"
 git checkout "$branch"
 git merge "$WERCKER_GIT_BRANCH"
 
+# the VERSION number is incremented after the merge is happened, so this always needs to have the latest published version
 VERSION=$(node -p "require('./package.json').version" | awk -F. -v OFS=. 'NF==1{print ++$NF}; NF>1{if(length($NF+1)>length($NF))$(NF-1)++; $NF=sprintf("%0*d", length($NF), ($NF+1)%(10^length($NF))); print}')
 
+# update package.json file and create a new git tag
 yarn version --new-version "$VERSION"
 
 if [ "$WERCKER_GH_NPM_RELEASE_DRYRUN" = "false" ]; then
@@ -47,15 +49,18 @@ else
   git tag
 fi
 
+# npm credentials
 touch .npmrc
-
 echo "//registry.npmjs.org/:_authToken=$WERCKER_GH_NPM_RELEASE_NPMTOKEN" >> .npmrc
 
 while read pkg; do
-  name=$(node -p "require('./package.json').name")
-  current=$(node -e "console.log(require(\"$pkg\").version)")
+  name=$(node -e "console.log(require(\"$pkg\").name)")
   published=$(npm view "$name" version 2>/dev/null)
+
+  current=$(node -e "console.log(require(\"$pkg\").version)")
+
   if [ "$published" != "$current" ]; then
+    # run the build script if it exists
     node -e "p=require(\"$pkg\"); (p.scripts && p.scripts.build) ? process.exit(0) : process.exit(1)"
     if [ $? -eq 0 ]; then
       yarn && yarn build
@@ -63,17 +68,18 @@ while read pkg; do
 
     if [ -n "$WERCKER_GH_NPM_RELEASE_PACKER" ]; then
       npm run "$WERCKER_GH_NPM_RELEASE_PACKER"
+      packagename="package"
     else
       npm pack
+      packagename="$name-$current"
+      packagename="${packagename/\//-}"
+      packagename="${packagename/@/}"
     fi
 
     mkdir -p .tmp/release
 
-    packagename="$name-$current"
-    packagename="${packagename/\//-}"
-    packagename="${packagename/@/}"
-
     tar xf "$packagename.tgz" -C .tmp/release
+
     cp .npmrc .tmp/release
 
     if [ "$WERCKER_GH_NPM_RELEASE_DRYRUN" = "false" ]; then
@@ -82,6 +88,8 @@ while read pkg; do
       echo "[dryrun] skipping npm publish..."
       (cd .tmp/release/package && find . -name './*' && cat package.json)
     fi
+  else
+    fail "already published"
   fi
 done < <(find . -name package.json -maxdepth 1)
 
