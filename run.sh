@@ -33,7 +33,7 @@ git checkout "$branch"
 git merge "origin/$WERCKER_GIT_BRANCH"
 
 # the VERSION number is incremented after the merge is happened, so this always needs to have the latest published version
-VERSION=$(node -p "require('./package.json').version" | awk -F. -v OFS=. 'NF==1{print ++$NF}; NF>1{if(length($NF+1)>length($NF))$(NF-1)++; $NF=sprintf("%0*d", length($NF), ($NF+1)%(10^length($NF))); print}')
+VERSION=$(node -p "require('./package.json').version" | awk -F. -v OFS=. '$NF=sprintf("%0*d", length($NF), ($NF+1));')
 
 # update package.json file and create a new git tag
 yarn version --new-version "$VERSION"
